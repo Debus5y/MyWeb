@@ -3,11 +3,53 @@ import { motion } from 'framer-motion';
 import { experiences } from '../data/experience';
 import { Card } from '../components/ui/Card';
 
+type ExperienceMediaProps = {
+  src?: string;
+  alt: string;
+  scrollable?: boolean;
+};
+
+function ExperienceMedia({ src, alt, scrollable }: ExperienceMediaProps) {
+  const [available, setAvailable] = React.useState(true);
+
+  if (!src || !available) {
+    return <div className="aspect-[4/3] bg-gray-100 rounded-xl w-full" />;
+  }
+
+  return (
+    <div className="aspect-[4/3] bg-gray-100 rounded-xl w-full overflow-hidden">
+      {scrollable ? (
+        <div className="w-full h-full overflow-y-auto overscroll-contain">
+          <img
+            src={src}
+            alt={alt}
+            className="w-full h-auto block"
+            onError={() => setAvailable(false)}
+          />
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover"
+          onError={() => setAvailable(false)}
+        />
+      )}
+    </div>
+  );
+}
+
 export function Experience() {
   const images = {
     bytedance: '/logo_bytedance.png',
     tal: '/logo_tal.png',
     yixin: '/logo_yixin.png',
+  };
+
+  const detailImages: Record<string, string> = {
+    bytedance: '/experience_bytedance.png',
+    tal: '/experience_tal.png',
+    yixin: '/experience_yixin.png',
   };
 
   const getShortName = (company: string) => {
@@ -137,8 +179,11 @@ export function Experience() {
                   </div>
 
                   <div className="w-full md:w-[35%]">
-                    {/* Placeholder for future image */}
-                    <div className="aspect-[4/3] bg-gray-100 rounded-xl w-full"></div>
+                    <ExperienceMedia
+                      src={detailImages[exp.id]}
+                      alt={`${getShortName(exp.company)} 经历图片`}
+                      scrollable={exp.id === 'yixin'}
+                    />
                   </div>
                 </div>
               </Card>
